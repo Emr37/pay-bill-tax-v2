@@ -91,7 +91,7 @@ export const Connected: FC = () => {
 
     const billTax = data.map((e) => {
         return (
-            <Card boxShadow='lg' p='6' rounded='md' bg='white' className={"paid"}>
+            <Card boxShadow='lg' p='6' rounded='md' bg='white'>
                 <CardHeader>
                     <Heading size='md'>{e.product}</Heading>
                 </CardHeader>
