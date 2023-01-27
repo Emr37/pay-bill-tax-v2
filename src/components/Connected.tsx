@@ -4,6 +4,7 @@ import styles from '../styles/Home.module.css'
 import { useToast, Card, CardHeader, CardBody, CardFooter, Grid, Heading, Button, Text, Badge, Spacer, Stack} from '@chakra-ui/react'
 import base58 from "bs58";
 import { Keypair, LAMPORTS_PER_SOL, Transaction, SystemProgram } from '@solana/web3.js'
+import nextConfig from 'next.config'
 
 
 export const Connected: FC = () => {
@@ -11,22 +12,12 @@ export const Connected: FC = () => {
     const [tx, setTx] = useState("");
     const [transactionState, setTransactionState] = useState(false);
     const [balance, setBalance] = useState(0);
-    const [data, SetData] = useState([{ product: "Water", period: "January", cost: 0.005 }, { product: "Electricity", period: "January", cost: 0.007 }]);
+    const [data, SetData] = useState([{ product: "Water", period: "January", cost: 0.005 , companyPrivateKey: nextConfig.env.ISKI_PRIVATE_KEY}, { product: "Electricity", period: "January", cost: 0.007, companyPrivateKey: nextConfig.env.BEDAS_PRIVATE_KEY }]);
 
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
    
-
-
-    const payPrivateKey = process.env.BEDAS_PRIVATE_KEY;
-
-    if (!payPrivateKey) {
-        throw new Error('PRIVATE_KEY not set')
-    }
-
-    const payKeypair = Keypair.fromSecretKey(base58.decode(payPrivateKey));
-
-
+ 
     useEffect(() => {
         if (!connection || !publicKey) {
             return;
@@ -49,7 +40,13 @@ export const Connected: FC = () => {
         })
     }
 
-    const clickPay = async (cost: any) => {
+
+    
+
+    const clickPay = async (companyPrivateKey: any, cost: any) => {
+              
+        const payKeypair = Keypair.fromSecretKey(base58.decode(companyPrivateKey));
+       
 
         if (!publicKey) {
             return
@@ -104,7 +101,7 @@ export const Connected: FC = () => {
                 <CardFooter>
                     <Button>{e.cost} SOL</Button>
                     <Spacer />
-                    <Button onClick={() => clickPay(e.cost)}>Pay</Button>
+                    <Button onClick={() => clickPay(e.companyPrivateKey, e.cost)}>Pay</Button>
                 </CardFooter>
             </Card>
         )
