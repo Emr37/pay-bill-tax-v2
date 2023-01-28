@@ -4,7 +4,7 @@ import styles from '../styles/Home.module.css'
 import { useToast, Card, CardHeader, CardBody, CardFooter, Grid, Heading, Button, Text, Badge, Spacer, Stack} from '@chakra-ui/react'
 import base58 from "bs58";
 import { Keypair, LAMPORTS_PER_SOL, Transaction, SystemProgram } from '@solana/web3.js'
-import nextConfig from 'next.config'
+import { companyData } from '@/pages/api/companyData';
 
 
 export const Connected: FC = () => {
@@ -12,7 +12,6 @@ export const Connected: FC = () => {
     const [tx, setTx] = useState("");
     const [transactionState, setTransactionState] = useState(false);
     const [balance, setBalance] = useState(0);
-    const [data, SetData] = useState([{ product: "Water", period: "January", cost: 0.005 , companyPrivateKey: nextConfig.env.ISKI_PRIVATE_KEY}, { product: "Electricity", period: "January", cost: 0.007, companyPrivateKey: nextConfig.env.BEDAS_PRIVATE_KEY }]);
 
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
@@ -39,8 +38,6 @@ export const Connected: FC = () => {
             isClosable: true,
         })
     }
-
-
     
 
     const clickPay = async (companyPrivateKey: any, cost: any) => {
@@ -89,7 +86,9 @@ export const Connected: FC = () => {
         }
     };
 
-    const billTax = data.map((e, index) => {
+    
+ 
+    const billTax = companyData?.map((e, index) => {
         return (
             <Card key={index} boxShadow='lg' p='6' rounded='md' bg='white'>
                 <CardHeader>
@@ -110,19 +109,14 @@ export const Connected: FC = () => {
 
     return (
             <div className={styles.Connected}>
-
                 <Badge>
                     {balance / LAMPORTS_PER_SOL} SOL
                 </Badge>
-
                 <Stack justifyContent={"center"} alignItems={"center"}>
-
                     <Grid paddingX={10} gap={8} >
                         {billTax}
                     </Grid>
-
                 </Stack>
-
             </div>
     )
 }
