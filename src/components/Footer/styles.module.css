@@ -8,6 +8,8 @@
     border-top: 1px;
     border-style: solid;
     border-color: #bbbbbb;
+    bottom: 0;
+    position: fixed;
   }
 
   .footer img {

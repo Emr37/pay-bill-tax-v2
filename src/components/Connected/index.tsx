@@ -1,9 +1,12 @@
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, useRef } from 'react'
 import styles from './styles.module.css'
 import base58 from "bs58";
 import { Keypair, LAMPORTS_PER_SOL, Transaction, SystemProgram } from '@solana/web3.js'
 import { companyData } from '@/pages/api/companyData';
+import BigNumber from 'bignumber.js';
+import { encodeURL, createQR } from '@solana/pay'
+
 import {
     useToast,
     Grid,
@@ -23,7 +26,6 @@ import {
 } from '@chakra-ui/react'
 
 
-
 export const Connected: FC = () => {
 
     const [tx, setTx] = useState("");
@@ -32,6 +34,8 @@ export const Connected: FC = () => {
 
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
+
+
 
 
     useEffect(() => {
@@ -104,6 +108,7 @@ export const Connected: FC = () => {
     };
 
 
+    // api'den gelen data...
 
     const billTax = companyData?.map((e, index) => {
         return (
@@ -119,501 +124,101 @@ export const Connected: FC = () => {
         )
     });
 
-    const IMAGE =
-        'https://images.unsplash.com/photo-1518051870910-a46e30d9db16?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1350&q=80';
 
-    return (
-        <Flex  bgGradient={useColorModeValue('linear(to-r, green.200, pink.500)', 'linear(to-l, green.200, pink.500)')}
-        >
-            <Grid templateColumns='repeat(3, 1fr)' gap={10}>
+    // localStorage'dan gelen data...
+
+    const value: any = localStorage.getItem('productsList')
+    const billList = JSON.parse(value)
+
+    const cardList = billList.map((e: any, index: any) => {
+
+
+        return (
+            <Box key={index}
+                role={'group'}
+                p={6}
+                maxW={'330px'}
+                w={'100%'}
+                bg={useColorModeValue('white', 'gray.800')}
+                boxShadow={'2xl'}
+                rounded={'lg'}
+                pos={'relative'}
+                zIndex={1}
+                m={20}
+
+            >
 
                 <Box
-                    role={'group'}
-                    p={6}
-                    maxW={'330px'}
-                    w={'100%'}
-                    bg={useColorModeValue('white', 'gray.800')}
-                    boxShadow={'2xl'}
                     rounded={'lg'}
+                    mt={-12}
                     pos={'relative'}
-                    zIndex={1}
-                    m={20}
-                    >
-                    
-                    <Box
+                    height={'230px'}
+                    _after={{
+                        transition: 'all .3s ease',
+                        content: '""',
+                        w: 'full',
+                        h: 'full',
+                        pos: 'absolute',
+                        top: 5,
+                        left: 0,
+                        filter: 'blur(15px)',
+                        zIndex: -1,
+                    }}
+                    _groupHover={{
+                        _after: {
+                            filter: 'blur(20px)',
+                        },
+                    }}>
+                    <Image
                         rounded={'lg'}
-                        mt={-12}
-                        pos={'relative'}
-                        height={'230px'}
-                        _after={{
-                            transition: 'all .3s ease',
-                            content: '""',
-                            w: 'full',
-                            h: 'full',
-                            pos: 'absolute',
-                            top: 5,
-                            left: 0,
-                            backgroundImage: `url(${IMAGE})`,
-                            filter: 'blur(15px)',
-                            zIndex: -1,
-                        }}
-                        _groupHover={{
-                            _after: {
-                                filter: 'blur(20px)',
-                            },
-                        }}>
-                        <Image
-                            rounded={'lg'}
-                            height={230}
-                            width={282}
-                            objectFit={'cover'}
-                            src={IMAGE}
-                        />
-                    </Box>
-                    <Stack pt={10} align={'center'}>
-                        <Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
-                            Brand
-                        </Text>
-                        <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
-                            Nice Chair, pink
-                        </Heading>
-                        <Stack direction={'row'} align={'center'}>
-                            <Text fontWeight={800} fontSize={'xl'}>
-                                $57
-                            </Text>
-                            <Text textDecoration={'line-through'} color={'gray.600'}>
-                                $199
-                            </Text>
-                        </Stack>
-                    </Stack>
+                        height={256}
+                        width={282}
+                        objectFit={'cover'}
+                        bg={'gray.200'}
+                        src={'../../../public/sol-logo.png'}
+                    />
                 </Box>
-                <Box
-                    role={'group'}
-                    p={6}
-                    maxW={'330px'}
-                    w={'100%'}
-                    bg={useColorModeValue('white', 'gray.800')}
-                    boxShadow={'2xl'}
-                    rounded={'lg'}
-                    pos={'relative'}
-                    zIndex={1}
-                    m={20}
-                    >
-                    
-                    <Box
-                        rounded={'lg'}
-                        mt={-12}
-                        pos={'relative'}
-                        height={'230px'}
-                        _after={{
-                            transition: 'all .3s ease',
-                            content: '""',
-                            w: 'full',
-                            h: 'full',
-                            pos: 'absolute',
-                            top: 5,
-                            left: 0,
-                            backgroundImage: `url(${IMAGE})`,
-                            filter: 'blur(15px)',
-                            zIndex: -1,
-                        }}
-                        _groupHover={{
-                            _after: {
-                                filter: 'blur(20px)',
-                            },
-                        }}>
-                        <Image
-                            rounded={'lg'}
-                            height={230}
-                            width={282}
-                            objectFit={'cover'}
-                            src={IMAGE}
-                        />
-                    </Box>
-                    <Stack pt={10} align={'center'}>
-                        <Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
-                            Brand
+                <Stack pt={10} align={'center'}>
+                    <Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
+                        {e.product}
+                    </Text>
+                    <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
+                        {e.period}
+                    </Heading>
+                    <Stack direction={'row'} align={'center'}>
+                        <Text fontWeight={800} fontSize={'xl'}>
+                            {e.cost} sol
                         </Text>
-                        <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
-                            Nice Chair, pink
-                        </Heading>
-                        <Stack direction={'row'} align={'center'}>
-                            <Text fontWeight={800} fontSize={'xl'}>
-                                $57
-                            </Text>
-                            <Text textDecoration={'line-through'} color={'gray.600'}>
-                                $199
-                            </Text>
-                        </Stack>
                     </Stack>
-                </Box>
-                <Box
-                    role={'group'}
-                    p={6}
-                    maxW={'330px'}
-                    w={'100%'}
-                    bg={useColorModeValue('white', 'gray.800')}
-                    boxShadow={'2xl'}
-                    rounded={'lg'}
-                    pos={'relative'}
-                    zIndex={1}
-                    m={20}
-                    >
-                    
-                    <Box
-                        rounded={'lg'}
-                        mt={-12}
-                        pos={'relative'}
-                        height={'230px'}
-                        _after={{
-                            transition: 'all .3s ease',
-                            content: '""',
-                            w: 'full',
-                            h: 'full',
-                            pos: 'absolute',
-                            top: 5,
-                            left: 0,
-                            backgroundImage: `url(${IMAGE})`,
-                            filter: 'blur(15px)',
-                            zIndex: -1,
-                        }}
-                        _groupHover={{
-                            _after: {
-                                filter: 'blur(20px)',
-                            },
-                        }}>
-                        <Image
-                            rounded={'lg'}
-                            height={230}
-                            width={282}
-                            objectFit={'cover'}
-                            src={IMAGE}
-                        />
-                    </Box>
-                    <Stack pt={10} align={'center'}>
-                        <Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
-                            Brand
-                        </Text>
-                        <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
-                            Nice Chair, pink
-                        </Heading>
-                        <Stack direction={'row'} align={'center'}>
-                            <Text fontWeight={800} fontSize={'xl'}>
-                                $57
-                            </Text>
-                            <Text textDecoration={'line-through'} color={'gray.600'}>
-                                $199
-                            </Text>
-                        </Stack>
-                    </Stack>
-                </Box>
-                <Box
-                    role={'group'}
-                    p={6}
-                    maxW={'330px'}
-                    w={'100%'}
-                    bg={useColorModeValue('white', 'gray.800')}
-                    boxShadow={'2xl'}
-                    rounded={'lg'}
-                    pos={'relative'}
-                    zIndex={1}
-                    m={20}
-                    >
-                    
-                    <Box
-                        rounded={'lg'}
-                        mt={-12}
-                        pos={'relative'}
-                        height={'230px'}
-                        _after={{
-                            transition: 'all .3s ease',
-                            content: '""',
-                            w: 'full',
-                            h: 'full',
-                            pos: 'absolute',
-                            top: 5,
-                            left: 0,
-                            backgroundImage: `url(${IMAGE})`,
-                            filter: 'blur(15px)',
-                            zIndex: -1,
-                        }}
-                        _groupHover={{
-                            _after: {
-                                filter: 'blur(20px)',
-                            },
-                        }}>
-                        <Image
-                            rounded={'lg'}
-                            height={230}
-                            width={282}
-                            objectFit={'cover'}
-                            src={IMAGE}
-                        />
-                    </Box>
-                    <Stack pt={10} align={'center'}>
-                        <Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
-                            Brand
-                        </Text>
-                        <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
-                            Nice Chair, pink
-                        </Heading>
-                        <Stack direction={'row'} align={'center'}>
-                            <Text fontWeight={800} fontSize={'xl'}>
-                                $57
-                            </Text>
-                            <Text textDecoration={'line-through'} color={'gray.600'}>
-                                $199
-                            </Text>
-                        </Stack>
-                    </Stack>
-                </Box>
-                <Box
-                    role={'group'}
-                    p={6}
-                    maxW={'330px'}
-                    w={'100%'}
-                    bg={useColorModeValue('white', 'gray.800')}
-                    boxShadow={'2xl'}
-                    rounded={'lg'}
-                    pos={'relative'}
-                    zIndex={1}
-                    m={20}
-                    >
-                    
-                    <Box
-                        rounded={'lg'}
-                        mt={-12}
-                        pos={'relative'}
-                        height={'230px'}
-                        _after={{
-                            transition: 'all .3s ease',
-                            content: '""',
-                            w: 'full',
-                            h: 'full',
-                            pos: 'absolute',
-                            top: 5,
-                            left: 0,
-                            backgroundImage: `url(${IMAGE})`,
-                            filter: 'blur(15px)',
-                            zIndex: -1,
-                        }}
-                        _groupHover={{
-                            _after: {
-                                filter: 'blur(20px)',
-                            },
-                        }}>
-                        <Image
-                            rounded={'lg'}
-                            height={230}
-                            width={282}
-                            objectFit={'cover'}
-                            src={IMAGE}
-                        />
-                    </Box>
-                    <Stack pt={10} align={'center'}>
-                        <Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
-                            Brand
-                        </Text>
-                        <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
-                            Nice Chair, pink
-                        </Heading>
-                        <Stack direction={'row'} align={'center'}>
-                            <Text fontWeight={800} fontSize={'xl'}>
-                                $57
-                            </Text>
-                            <Text textDecoration={'line-through'} color={'gray.600'}>
-                                $199
-                            </Text>
-                        </Stack>
-                    </Stack>
-                </Box>
-                <Box
-                    role={'group'}
-                    p={6}
-                    maxW={'330px'}
-                    w={'100%'}
-                    bg={useColorModeValue('white', 'gray.800')}
-                    boxShadow={'2xl'}
-                    rounded={'lg'}
-                    pos={'relative'}
-                    zIndex={1}
-                    m={20}
-                    >
-                    
-                    <Box
-                        rounded={'lg'}
-                        mt={-12}
-                        pos={'relative'}
-                        height={'230px'}
-                        _after={{
-                            transition: 'all .3s ease',
-                            content: '""',
-                            w: 'full',
-                            h: 'full',
-                            pos: 'absolute',
-                            top: 5,
-                            left: 0,
-                            backgroundImage: `url(${IMAGE})`,
-                            filter: 'blur(15px)',
-                            zIndex: -1,
-                        }}
-                        _groupHover={{
-                            _after: {
-                                filter: 'blur(20px)',
-                            },
-                        }}>
-                        <Image
-                            rounded={'lg'}
-                            height={230}
-                            width={282}
-                            objectFit={'cover'}
-                            src={IMAGE}
-                        />
-                    </Box>
-                    <Stack pt={10} align={'center'}>
-                        <Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
-                            Brand
-                        </Text>
-                        <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
-                            Nice Chair, pink
-                        </Heading>
-                        <Stack direction={'row'} align={'center'}>
-                            <Text fontWeight={800} fontSize={'xl'}>
-                                $57
-                            </Text>
-                            <Text textDecoration={'line-through'} color={'gray.600'}>
-                                $199
-                            </Text>
-                        </Stack>
-                    </Stack>
-                </Box>
-                <Box
-                    role={'group'}
-                    p={6}
-                    maxW={'330px'}
-                    w={'100%'}
-                    bg={useColorModeValue('white', 'gray.800')}
-                    boxShadow={'2xl'}
-                    rounded={'lg'}
-                    pos={'relative'}
-                    zIndex={1}
-                    m={20}
-                    >
-                    
-                    <Box
-                        rounded={'lg'}
-                        mt={-12}
-                        pos={'relative'}
-                        height={'230px'}
-                        _after={{
-                            transition: 'all .3s ease',
-                            content: '""',
-                            w: 'full',
-                            h: 'full',
-                            pos: 'absolute',
-                            top: 5,
-                            left: 0,
-                            backgroundImage: `url(${IMAGE})`,
-                            filter: 'blur(15px)',
-                            zIndex: -1,
-                        }}
-                        _groupHover={{
-                            _after: {
-                                filter: 'blur(20px)',
-                            },
-                        }}>
-                        <Image
-                            rounded={'lg'}
-                            height={230}
-                            width={282}
-                            objectFit={'cover'}
-                            src={IMAGE}
-                        />
-                    </Box>
-                    <Stack pt={10} align={'center'}>
-                        <Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
-                            Brand
-                        </Text>
-                        <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
-                            Nice Chair, pink
-                        </Heading>
-                        <Stack direction={'row'} align={'center'}>
-                            <Text fontWeight={800} fontSize={'xl'}>
-                                $57
-                            </Text>
-                            <Text textDecoration={'line-through'} color={'gray.600'}>
-                                $199
-                            </Text>
-                        </Stack>
-                    </Stack>
-                </Box>
-                <Box
-                    role={'group'}
-                    p={6}
-                    maxW={'330px'}
-                    w={'100%'}
-                    bg={useColorModeValue('white', 'gray.800')}
-                    boxShadow={'2xl'}
-                    rounded={'lg'}
-                    pos={'relative'}
-                    zIndex={1}
-                    m={20}
-                    >
-                    
-                    <Box
-                        rounded={'lg'}
-                        mt={-12}
-                        pos={'relative'}
-                        height={'230px'}
-                        _after={{
-                            transition: 'all .3s ease',
-                            content: '""',
-                            w: 'full',
-                            h: 'full',
-                            pos: 'absolute',
-                            top: 5,
-                            left: 0,
-                            backgroundImage: `url(${IMAGE})`,
-                            filter: 'blur(15px)',
-                            zIndex: -1,
-                        }}
-                        _groupHover={{
-                            _after: {
-                                filter: 'blur(20px)',
-                            },
-                        }}>
-                        <Image
-                            rounded={'lg'}
-                            height={230}
-                            width={282}
-                            objectFit={'cover'}
-                            src={IMAGE}
-                        />
-                    </Box>
-                    <Stack pt={10} align={'center'}>
-                        <Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
-                            Brand
-                        </Text>
-                        <Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
-                            Nice Chair, pink
-                        </Heading>
-                        <Stack direction={'row'} align={'center'}>
-                            <Text fontWeight={800} fontSize={'xl'}>
-                                $57
-                            </Text>
-                            <Text textDecoration={'line-through'} color={'gray.600'}>
-                                $199
-                            </Text>
-                        </Stack>
-                    </Stack>
-                </Box>
+                </Stack>
+            </Box>
+
+        )
+    })
+
+
+
+return (
+    <Flex bgGradient={useColorModeValue('linear(to-r, green.200, pink.500)', 'linear(to-l, green.200, pink.500)')}
+    >
+        <Grid templateColumns='repeat(3, 1fr)' gap={5} my={50}>
+
+            {
+                cardList
+            }
+            {
+                billTax
+            }
+
+
+
         </Grid>
 
-</Flex>
+    </Flex>
 
-    )
+)
 
-            {/*<Badge>
+{/*<Badge>
                     {balance / LAMPORTS_PER_SOL} SOL
     </Badge> 
 
