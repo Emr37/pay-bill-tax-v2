@@ -267,6 +267,8 @@ export const Connected: FC = () => {
                         bg={'gray.200'}
                         loading='lazy'
                         src='/sol-logo.png'
+                        alt='solana-logo'
+
                     />
                 </Box>
                 <Stack pt={10} align={'center'}>
