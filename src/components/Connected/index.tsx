@@ -101,8 +101,8 @@ export const Connected: FC = () => {
         }
     };
 
-
-
+    const backGroundColor = useColorModeValue('white', 'gray.800')
+    
     const billTax = companyData?.map((e, index) => {
         return (
             <Box key={index}
@@ -110,7 +110,7 @@ export const Connected: FC = () => {
                 p={6}
                 maxW={'330px'}
                 w={'100%'}
-                bg={useColorModeValue('white', 'gray.800')}
+                bg={backGroundColor}
                 boxShadow={'2xl'}
                 rounded={'lg'}
                 pos={'relative'}
@@ -229,7 +229,7 @@ export const Connected: FC = () => {
                 p={6}
                 maxW={'330px'}
                 w={'100%'}
-                bg={useColorModeValue('white', 'gray.800')}
+                bg={backGroundColor}
                 boxShadow={'2xl'}
                 rounded={'lg'}
                 pos={'relative'}
@@ -291,9 +291,9 @@ export const Connected: FC = () => {
     })
 
 
-
+    const backGroundGradient = useColorModeValue('linear(to-r, green.200, pink.500)', 'linear(to-l, green.200, pink.500)')
     return (
-        <Flex bgGradient={useColorModeValue('linear(to-r, green.200, pink.500)', 'linear(to-l, green.200, pink.500)')}
+        <Flex bgGradient={backGroundGradient}
         >
             <Grid templateColumns='repeat(3, 1fr)' gap={5} my={50}>
 
