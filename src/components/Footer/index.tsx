@@ -69,7 +69,7 @@ import { ReactNode } from 'react';
             align={{ base: 'center', md: 'center' }}>
             <Text>© 2023 All rights reserved</Text>
 
-            <Image src='/solana.png'/>
+            <Image src='/solana.png' alt='solana-logo'/>
             
             <Stack direction={'row'} spacing={6}>
               <SocialButton label={'Linkedin'} href={'https://www.linkedin.com/in/emrah-aksoy/'}>

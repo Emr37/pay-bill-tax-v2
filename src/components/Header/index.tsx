@@ -66,6 +66,7 @@ export const Header: FC = () => {
           <Image
           src="/pbtLogo.png"
           loading='lazy'
+          alt='project-logo'
           />   
           
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
