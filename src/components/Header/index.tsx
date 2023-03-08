@@ -63,13 +63,6 @@ export const Header: FC = () => {
         </Flex>
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align={'center'}>
 
-          {/*<Text
-            textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-            fontFamily={'heading'}
-            color={useColorModeValue('gray.800', 'white')}>
-            Logo
-          </Text>*/}
-
           <Image
           src="/pbtLogo.png"
           loading='lazy'

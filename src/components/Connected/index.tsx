@@ -8,15 +8,10 @@ import { companyData } from '@/pages/api/companyData';
 import {
     useToast,
     Grid,
-    GridItem,
     Heading,
     Button,
     Text,
-    Badge,
-    Container,
     Box,
-    ButtonGroup,
-    Center,
     useColorModeValue,
     Stack,
     Image,
@@ -58,7 +53,6 @@ export const Connected: FC = () => {
         })
     }
 
-    // private Key ile tx fonksiyonu...
     const clickPay = async (companyPrivateKey: any, cost: any) => {
 
         const payKeypair = Keypair.fromSecretKey(base58.decode(companyPrivateKey));
@@ -108,7 +102,6 @@ export const Connected: FC = () => {
     };
 
 
-    // api'den gelen data...
 
     const billTax = companyData?.map((e, index) => {
         return (
@@ -178,7 +171,6 @@ export const Connected: FC = () => {
         )
     });
 
-    // public key ile tx fonksiyonu.
     const clickPayNew = async (companyPublicKey: any, cost: any) => {
 
 
@@ -224,8 +216,6 @@ export const Connected: FC = () => {
     };
 
 
-
-    // localStorage'dan gelen data...
 
     const value: any = localStorage.getItem('productsList')
     const billList = JSON.parse(value)

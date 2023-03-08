@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Container, Flex, useColorModeValue } from '@chakra-ui/react'
+import { Flex, useColorModeValue } from '@chakra-ui/react'
 import styles from './styles.module.css'
 
 
